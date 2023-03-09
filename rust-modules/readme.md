@@ -7,3 +7,7 @@
 
 - you can store multiple struct definitions in multiple files and reference them using `mod` and `use`
 - make sure to have the `src/lib.rs` file
+
+- peep the two different ways to call modules:
+    - defined in the same file `src/back_of_house.rs`
+    - defined in child files `src/front_of_house.rs`, in which case the modules are located in the `src/front_of_house/` directory
