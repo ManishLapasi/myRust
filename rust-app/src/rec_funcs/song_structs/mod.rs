@@ -42,3 +42,22 @@ impl Song {
         return f64::powi(self.track_duration-s.track_duration,2)+f64::powi(self.danceability-s.danceability,2)+f64::powi(self.energy-s.energy,2)+f64::powi(self.key-s.key,2)+f64::powi(self.loudness-s.loudness,2)+f64::powi(self.mode-s.mode,2)+f64::powi(self.speechiness-s.speechiness,2)+f64::powi(self.acousticness-s.acousticness,2)+f64::powi(self.instrumentalness-s.instrumentalness,2)+f64::powi(self.liveness-s.liveness,2)+f64::powi(self.valence-s.valence,2)+f64::powi(self.tempo-s.tempo,2)+f64::powi(self.time_signature-s.time_signature,2);
     }
 }
+
+#[derive(Debug)]
+pub struct Track {
+    pub track_id: String,
+    pub track_name: String,
+    pub track_duration: i64, 
+    pub danceability: f64,
+    pub energy: f64,
+    pub key: i64,
+    pub loudness: f64, 
+    pub mode: i64,
+    pub speechiness: f64,
+    pub acousticness: f64,
+    pub instrumentalness: f64,
+    pub liveness: f64,
+    pub valence: f64,
+    pub tempo: f64,
+    pub time_signature: i64
+}
