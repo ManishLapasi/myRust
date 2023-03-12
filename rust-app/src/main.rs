@@ -1,81 +1,22 @@
+#![allow(unused)]
+#![allow(non_snake_case)]
+
 use postgres::{Client, NoTls};
-use std::borrow::Borrow;
-use std::collections::HashMap;
 use std::time::Instant;
+use crate::song_structs::song::Song;
+use crate::song_structs::track::Track;
+use crate::creds::creds::{gethost, getuser, getpasswd, getdbname, getport};
 
-mod creds;
-
-#[derive(Debug)]
-struct Track {
-    track_id: String,
-    track_name: String,
-    track_duration: i64, 
-    danceability: f64,
-    energy: f64,
-    key: i64,
-    loudness: f64, 
-    mode: i64,
-    speechiness: f64,
-    acousticness: f64,
-    instrumentalness: f64,
-    liveness: f64,
-    valence: f64,
-    tempo: f64,
-    time_signature: i64
-}
-
-#[derive(Debug)]
-struct Song {
-    track_id: String,
-    track_duration: f64, 
-    danceability: f64,
-    energy: f64,
-    key: f64,
-    loudness: f64, 
-    mode: f64,
-    speechiness: f64,
-    acousticness: f64,
-    instrumentalness: f64,
-    liveness: f64,
-    valence: f64,
-    tempo: f64,
-    time_signature: f64,
-    default: bool,
-}
-
-impl Song {
-    fn default_init() -> Self {
-        Self {
-            track_id: String::from("default_track"),
-            track_duration: -1.0, 
-            danceability: -1.0,
-            energy: -1.0,
-            key: -1.0,
-            loudness: -1.0, 
-            mode: -1.0,
-            speechiness: -1.0,
-            acousticness: -1.0,
-            instrumentalness: -1.0,
-            liveness: -1.0,
-            valence: -1.0,
-            tempo: -1.0,
-            time_signature: -1.0,
-            default: true,
-        }
-    }
-
-    fn get_diff(&self, s: &Song) -> f64 {
-        return f64::powi(self.track_duration-s.track_duration,2)+f64::powi(self.danceability-s.danceability,2)+f64::powi(self.energy-s.energy,2)+f64::powi(self.key-s.key,2)+f64::powi(self.loudness-s.loudness,2)+f64::powi(self.mode-s.mode,2)+f64::powi(self.speechiness-s.speechiness,2)+f64::powi(self.acousticness-s.acousticness,2)+f64::powi(self.instrumentalness-s.instrumentalness,2)+f64::powi(self.liveness-s.liveness,2)+f64::powi(self.valence-s.valence,2)+f64::powi(self.tempo-s.tempo,2)+f64::powi(self.time_signature-s.time_signature,2);
-    }
-}
+pub mod creds;
+pub mod song_structs;
 
 fn main() {
 
-    let host = crate::creds::creds::gethost();
-    let user = crate::creds::creds::getuser();
-    let passwd = crate::creds::creds::getpasswd();
-    let db_name = crate::creds::creds::getdbname();
-    let port = crate::creds::creds::getport();
+    let host = gethost();
+    let user = getuser();
+    let passwd = getpasswd();
+    let db_name = getdbname();
+    let port = getport();
 
     let start = Instant::now();
     let mut client = Client::connect(
@@ -84,7 +25,7 @@ fn main() {
     ).unwrap();
     let mut duration = start.elapsed();
     println!("time taken for db connection {:?}",duration);
-    let mut track: Song;
+    let track: Song;
 
     let track_id = "2f9NLCoIaiIn7rZnH9mdir";
     let cluster = get_cluster(track_id, &mut client);
@@ -97,10 +38,10 @@ fn main() {
     let searchSpace: Vec<Song> = get_searchspace(track_id, &mut client, cluster, true);
     duration = start.elapsed() - duration;
     println!("time taken to get searchspace {:?}",duration);
-    let mut scores: Vec<(String, f64)> = score_on_searchspace(&searchSpace, track,1.0,1.0,1.0);
+    let scores: Vec<(String, f64)> = score_on_searchspace(&searchSpace, track,1.0,1.0,1.0);
     duration = start.elapsed() - duration;
     println!("time taken to score on searchspace {:?}",duration);
-    let mut ans = get_unscaled_features(scores, 25, &mut client);
+    let ans = get_unscaled_features(scores, 25, &mut client);
     println!("closest songs unscaled features!");
     println!("{:#?}",ans);
     duration = start.elapsed() - duration;
