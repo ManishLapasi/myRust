@@ -1,2 +1,4 @@
 target/
 creds/
+creds.txt
+*.env
